@@ -3,124 +3,186 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Gestion de Cantine Scolaire</title>
 <style>
-body{font-family:Arial;background:#f0f5f1;margin:0;padding:12px;color:#183b2b}
-header{background:#087b45;color:white;text-align:center;padding:20px;border-radius:12px}
-h1{font-size:23px}
+body{font-family:Arial;background:#f0f5f1;padding:12px;color:#183b2b}
+header,.bilan{background:#087b45;color:white;padding:16px;border-radius:12px;text-align:center}
+section{background:white;padding:12px;border-radius:10px;margin:14px 0}
 h2{color:#087b45}
-input{width:65px;padding:10px;border:1px solid #aaa;border-radius:7px;text-align:center;font-size:17px}
-table{width:100%;border-collapse:collapse;background:white;margin:12px 0}
-th,td{border:1px solid #ccc;padding:9px;text-align:center}
+input{width:75px;padding:9px;border:1px solid #aaa;border-radius:6px;font-size:16px}
+input[type=date]{width:175px}
+table{width:100%;border-collapse:collapse;margin:12px 0;background:white}
+td,th{border:1px solid #ccc;padding:8px;text-align:center}
 th{background:#087b45;color:white}
-.total{background:#d9f4e2;font-weight:bold}
-.resultat{background:#087b45;color:white;padding:15px;border-radius:10px;margin-top:15px}
-button{background:#087b45;color:white;border:0;padding:12px;border-radius:8px;font-size:16px;margin:5px}
+button{background:#087b45;color:white;border:0;border-radius:7px;padding:12px;margin:5px;font-size:15px}
 </style>
 </head>
 <body>
 <header>
 <h1>GESTION DE CANTINE SCOLAIRE</h1>
-<p>Suivi des rationnaires par classe et par genre</p>
+<p>Rationnaires et gestion des stocks</p>
 </header>
 
-<h2>Date de gestion</h2>
-<input type="date" id="date" style="width:180px">
+<section>
+<h2>Date</h2>
+<input type="date" id="date">
+</section>
 
-<h2>Effectif des rationnaires</h2>
-<p>Prix d'une ration : <b>25 F CFA</b></p>
-
+<section>
+<h2>1. Rationnaires par classe et genre</h2>
+<p>Prix d'une ration : 25 F CFA</p>
 <table>
-<thead>
-<tr>
-<th>Classe</th>
-<th>Garçons</th>
-<th>Filles</th>
-<th>Total</th>
-</tr>
-</thead>
-<tbody id="corps"></tbody>
-<tfoot>
-<tr class="total">
-<td>TOTAL</td>
-<td id="tg">0</td>
-<td id="tf">0</td>
-<td id="tt">0</td>
-</tr>
-</tfoot>
+<tr><th>Classe</th><th>Garçons</th><th>Filles</th><th>Total</th></tr>
+<tbody id="classes"></tbody>
+<tr><th>TOTAL</th><th id="tg">0</th><th id="tf">0</th><th id="tt">0</th></tr>
 </table>
+</section>
 
-<div class="resultat">
-<h2 style="color:white">BILAN DE LA CANTINE</h2>
-<p>Total garçons : <b id="bg">0</b></p>
-<p>Total filles : <b id="bf">0</b></p>
-<p>Total rationnaires : <b id="br">0</b></p>
-<h2 style="color:white">RECETTE TOTALE</h2>
-<h1 id="argent">0 F CFA</h1>
+<section>
+<h2>2. Stocks initiaux (kg)</h2>
+<table>
+<tr><th>Denrée</th><th>Stock initial</th></tr>
+<tr><td>Riz</td><td><input id="i_riz" type="number" min="0" step="0.01"></td></tr>
+<tr><td>Huile</td><td><input id="i_huile" type="number" min="0" step="0.01"></td></tr>
+<tr><td>Poisson</td><td><input id="i_poisson" type="number" min="0" step="0.01"></td></tr>
+<tr><td>Haricot</td><td><input id="i_haricot" type="number" min="0" step="0.01"></td></tr>
+</table>
+<button onclick="enregistrerStocks()">Enregistrer stocks initiaux</button>
+</section>
+
+<section>
+<h2>3. Entrées de stock (kg)</h2>
+<table>
+<tr><th>Denrée</th><th>Quantité entrée</th></tr>
+<tr><td>Riz</td><td><input id="e_riz" type="number" min="0" step="0.01" value="0"></td></tr>
+<tr><td>Huile</td><td><input id="e_huile" type="number" min="0" step="0.01" value="0"></td></tr>
+<tr><td>Poisson</td><td><input id="e_poisson" type="number" min="0" step="0.01" value="0"></td></tr>
+<tr><td>Haricot</td><td><input id="e_haricot" type="number" min="0" step="0.01" value="0"></td></tr>
+</table>
+</section>
+
+<section>
+<h2>4. Sorties automatiques du jour</h2>
+<table>
+<tr><th>Denrée</th><th>Consommation par rationnaire</th><th>Sortie totale (kg)</th></tr>
+<tr><td>Riz</td><td>0,15 kg</td><td id="s_riz">0</td></tr>
+<tr><td>Huile</td><td>0,01 kg</td><td id="s_huile">0</td></tr>
+<tr><td>Poisson</td><td>0,02 kg</td><td id="s_poisson">0</td></tr>
+<tr><td>Haricot</td><td>0,02 kg</td><td id="s_haricot">0</td></tr>
+</table>
+</section>
+
+<section>
+<h2>5. Bilan des stocks</h2>
+<table>
+<tr><th>Denrée</th><th>Stock initial</th><th>Entrée séparée</th><th>Sortie du jour</th><th>Stock restant</th></tr>
+<tbody id="bilan"></tbody>
+</table>
+<p><b>Règle : Stock restant = Stock initial - Sortie du jour.</b></p>
+</section>
+
+<div class="bilan">
+<h2 style="color:white">6. BILAN JOURNALIER</h2>
+<p>Garçons : <b id="bg">0</b></p>
+<p>Filles : <b id="bf">0</b></p>
+<p>Nombre total de rationnaires : <b id="br">0</b></p>
+<h2 style="color:white">Recette totale</h2>
+<h1 id="recette">0 F CFA</h1>
 </div>
 
-<button onclick="sauver()">Enregistrer la journée</button>
-<button onclick="charger()">Charger la journée</button>
-<button onclick="window.print()">Imprimer le bilan</button>
+<button onclick="enregistrer()">ENREGISTRER LA JOURNÉE</button>
+<button onclick="charger()">CHARGER LA JOURNÉE</button>
+<button onclick="window.print()">IMPRIMER</button>
 
 <script>
-const classes=["CP1","CP2","CE1","CE2","CM1","CM2"];
-const prix=25;
-const corps=document.getElementById("corps");
+const noms=["CP1","CP2","CE1","CE2","CM1","CM2"];
+const denrees=["riz","huile","poisson","haricot"];
+const taux={riz:0.15,huile:0.01,poisson:0.02,haricot:0.02};
+const cle="gestion_cantine_finale";
+let base=JSON.parse(localStorage.getItem(cle)||'{"stocks":{},"jours":{}}');
+let corps=document.getElementById("classes");
 
-classes.forEach((c,i)=>{
+noms.forEach((c,i)=>{
 let tr=document.createElement("tr");
-tr.innerHTML=`
-<td><b>${c}</b></td>
+tr.innerHTML=`<td>${c}</td>
 <td><input type="number" min="0" value="0" id="g${i}"></td>
 <td><input type="number" min="0" value="0" id="f${i}"></td>
 <td id="t${i}">0</td>`;
 corps.appendChild(tr);
 });
 
-function calculer(){
+function v(id){return Math.max(0,Number(document.getElementById(id).value)||0)}
+function total(){
 let g=0,f=0;
-classes.forEach((c,i)=>{
-let a=Math.max(0,Number(document.getElementById("g"+i).value)||0);
-let b=Math.max(0,Number(document.getElementById("f"+i).value)||0);
-document.getElementById("t"+i).textContent=a+b;
+noms.forEach((c,i)=>{
+let a=v("g"+i),b=v("f"+i);
 g+=a;f+=b;
+document.getElementById("t"+i).textContent=a+b;
 });
-let total=g+f;
-document.getElementById("tg").textContent=g;
-document.getElementById("tf").textContent=f;
-document.getElementById("tt").textContent=total;
-document.getElementById("bg").textContent=g;
-document.getElementById("bf").textContent=f;
-document.getElementById("br").textContent=total;
-document.getElementById("argent").textContent=(total*prix).toLocaleString("fr-FR")+" F CFA";
+return {g,f,n:g+f};
 }
-classes.forEach((c,i)=>{
-document.getElementById("g"+i).addEventListener("input",calculer);
-document.getElementById("f"+i).addEventListener("input",calculer);
+function afficher(){
+let x=total();
+tg.textContent=x.g;tf.textContent=x.f;tt.textContent=x.n;
+bg.textContent=x.g;bf.textContent=x.f;br.textContent=x.n;
+recette.textContent=(x.n*25).toLocaleString("fr-FR")+" F CFA";
+denrees.forEach(d=>{
+let s=x.n*taux[d];
+document.getElementById("s_"+d).textContent=s.toFixed(2);
 });
-function sauver(){
-let donnees={};
-classes.forEach((c,i)=>{
-donnees["g"+i]=document.getElementById("g"+i).value;
-donnees["f"+i]=document.getElementById("f"+i).value;
+let html="";
+denrees.forEach(d=>{
+let initial=Number(base.stocks[d])||0;
+let entree=v("e_"+d);
+let sortie=x.n*taux[d];
+let restant=initial-sortie;
+html+=`<tr><td>${d.toUpperCase()}</td>
+<td>${initial.toFixed(2)}</td>
+<td>${entree.toFixed(2)}</td>
+<td>${sortie.toFixed(2)}</td>
+<td><b>${restant.toFixed(2)}</b></td></tr>`;
 });
-localStorage.setItem("cantine_"+document.getElementById("date").value,JSON.stringify(donnees));
+document.getElementById("bilan").innerHTML=html;
+}
+function enregistrerStocks(){
+denrees.forEach(d=>base.stocks[d]=v("i_"+d));
+localStorage.setItem(cle,JSON.stringify(base));
+afficher();
+alert("Stocks initiaux enregistrés !");
+}
+function enregistrer(){
+let date=document.getElementById("date").value;
+if(!date){alert("Choisissez une date.");return;}
+let jour={classes:{},entrees:{}};
+noms.forEach((c,i)=>jour.classes[c]={g:v("g"+i),f:v("f"+i)});
+denrees.forEach(d=>jour.entrees[d]=v("e_"+d));
+base.jours[date]=jour;
+localStorage.setItem(cle,JSON.stringify(base));
+afficher();
 alert("Journée enregistrée !");
 }
 function charger(){
-let d=localStorage.getItem("cantine_"+document.getElementById("date").value);
-if(!d){alert("Aucune journée enregistrée pour cette date.");return;}
-let donnees=JSON.parse(d);
-classes.forEach((c,i)=>{
-document.getElementById("g"+i).value=donnees["g"+i];
-document.getElementById("f"+i).value=donnees["f"+i];
+let date=document.getElementById("date").value;
+let j=base.jours[date];
+if(!j){alert("Aucune journée enregistrée pour cette date.");return;}
+noms.forEach((c,i)=>{
+document.getElementById("g"+i).value=j.classes[c].g;
+document.getElementById("f"+i).value=j.classes[c].f;
 });
-calculer();
+denrees.forEach(d=>document.getElementById("e_"+d).value=j.entrees[d]||0);
+afficher();
 }
+denrees.forEach(d=>{
+document.getElementById("i_"+d).value=base.stocks[d]??0;
+document.getElementById("e_"+d).addEventListener("input",afficher);
+});
+noms.forEach((c,i)=>{
+document.getElementById("g"+i).addEventListener("input",afficher);
+document.getElementById("f"+i).addEventListener("input",afficher);
+});
 document.getElementById("date").value=new Date().toISOString().slice(0,10);
-calculer();
+afficher();
 </script>
 </body>
 </html>
