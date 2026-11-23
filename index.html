@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -8,26 +7,30 @@
 <style>
 *{box-sizing:border-box}
 body{font-family:Arial,sans-serif;background:#f0f5ef;margin:0;padding:12px;color:#222}
-header{text-align:center;background:#087b45;color:white;padding:15px;border-radius:12px}
+header{text-align:center;background:#087b45;color:white;padding:18px;border-radius:12px}
 header img{width:130px;height:130px;object-fit:contain;background:white;border-radius:12px}
-h1{font-size:22px;margin:10px 0}
+h1{font-size:22px}
 h2{color:#087b45;font-size:19px}
-section{background:white;padding:13px;border-radius:10px;margin:12px 0;box-shadow:0 2px 5px #ccc}
-input,textarea,select{padding:10px;border:1px solid #aaa;border-radius:6px;width:100%;font-size:16px;margin:4px 0}
-input[type=number]{min-width:65px}
-table{width:100%;border-collapse:collapse;margin:8px 0}
-th,td{border:1px solid #ccc;padding:7px;text-align:center;font-size:14px}
+section{background:white;padding:14px;border-radius:10px;margin:12px 0;box-shadow:0 2px 5px #ccc}
+label{display:block;margin:9px 0 4px}
+input{width:100%;padding:11px;border:1px solid #aaa;border-radius:6px;font-size:16px}
+input:focus{outline:2px solid #087b45}
+table{width:100%;border-collapse:collapse;margin-top:10px}
+th,td{border:1px solid #ccc;padding:7px;text-align:center}
 th{background:#087b45;color:white}
-button{background:#087b45;color:white;border:0;padding:12px;border-radius:7px;font-size:15px;margin:5px 2px}
-.danger{background:#bd2929}
+td input{min-width:55px;padding:8px}
 .total{font-weight:bold;color:#087b45;font-size:18px}
+button{background:#087b45;color:white;border:0;padding:12px;border-radius:7px;font-size:15px;margin:5px 2px}
+.danger{background:#b52d29}
 .note{font-size:13px;color:#555}
+@media print{button{display:none}body{background:white}section{box-shadow:none}}
 </style>
 </head>
 <body>
 
 <header>
-<img src="logo-cantine.png" alt="Logo de la cantine">
+<img src="logo-cantine.png" alt="Logo de la cantine"
+onerror="this.style.display='none'">
 <h1>GESTION DE CANTINE SCOLAIRE</h1>
 <p>Suivi des rationnaires, des stocks et des finances</p>
 </header>
@@ -35,7 +38,7 @@ button{background:#087b45;color:white;border:0;padding:12px;border-radius:7px;fo
 <section>
 <h2>1. Établissement et date</h2>
 <label>Nom de l'établissement</label>
-<input id="etablissement" value="Gestion de la cantine scolaire">
+<input id="etablissement" value="EPP FENI">
 <label>Date</label>
 <input type="date" id="date">
 </section>
@@ -44,9 +47,13 @@ button{background:#087b45;color:white;border:0;padding:12px;border-radius:7px;fo
 <h2>2. Rationnaires par classe et par genre</h2>
 <p>Prix d'une ration : <b>25 F CFA</b></p>
 <table>
-<thead><tr><th>Classe</th><th>Garçons</th><th>Filles</th><th>Total</th></tr></thead>
+<thead>
+<tr><th>Classe</th><th>Garçons</th><th>Filles</th><th>Total</th></tr>
+</thead>
 <tbody id="classes"></tbody>
-<tfoot><tr><th>TOTAL</th><th id="tg">0</th><th id="tf">0</th><th id="tt">0</th></tr></tfoot>
+<tfoot>
+<tr><th>TOTAL</th><th id="tg">0</th><th id="tf">0</th><th id="tt">0</th></tr>
+</tfoot>
 </table>
 <p>Nombre total de rationnaires : <strong id="rationnaires" class="total">0</strong></p>
 <p>Recette théorique du jour : <strong id="recette" class="total">0 F CFA</strong></p>
@@ -56,10 +63,10 @@ button{background:#087b45;color:white;border:0;padding:12px;border-radius:7px;fo
 <h2>3. Stocks initiaux (kg)</h2>
 <table>
 <tr><th>Denrée</th><th>Stock initial</th></tr>
-<tr><td>Riz</td><td><input type="number" min="0" step="0.01" id="i_riz" value="0"></td></tr>
-<tr><td>Huile</td><td><input type="number" min="0" step="0.01" id="i_huile" value="0"></td></tr>
-<tr><td>Poisson</td><td><input type="number" min="0" step="0.01" id="i_poisson" value="0"></td></tr>
-<tr><td>Haricot</td><td><input type="number" min="0" step="0.01" id="i_haricot" value="0"></td></tr>
+<tr><td>Riz</td><td><input type="number" min="0" step="0.01" id="riz"></td></tr>
+<tr><td>Huile</td><td><input type="number" min="0" step="0.01" id="huile"></td></tr>
+<tr><td>Poisson</td><td><input type="number" min="0" step="0.01" id="poisson"></td></tr>
+<tr><td>Haricot</td><td><input type="number" min="0" step="0.01" id="haricot"></td></tr>
 </table>
 </section>
 
@@ -67,141 +74,124 @@ button{background:#087b45;color:white;border:0;padding:12px;border-radius:7px;fo
 <h2>4. Entrées de stock (kg)</h2>
 <table>
 <tr><th>Denrée</th><th>Quantité entrée</th></tr>
-<tr><td>Riz</td><td><input type="number" min="0" step="0.01" id="e_riz" value="0"></td></tr>
-<tr><td>Huile</td><td><input type="number" min="0" step="0.01" id="e_huile" value="0"></td></tr>
-<tr><td>Poisson</td><td><input type="number" min="0" step="0.01" id="e_poisson" value="0"></td></tr>
-<tr><td>Haricot</td><td><input type="number" min="0" step="0.01" id="e_haricot" value="0"></td></tr>
+<tr><td>Riz</td><td><input type="number" min="0" step="0.01" id="e_riz"></td></tr>
+<tr><td>Huile</td><td><input type="number" min="0" step="0.01" id="e_huile"></td></tr>
+<tr><td>Poisson</td><td><input type="number" min="0" step="0.01" id="e_poisson"></td></tr>
+<tr><td>Haricot</td><td><input type="number" min="0" step="0.01" id="e_haricot"></td></tr>
 </table>
 </section>
 
 <section>
-<h2>5. Sorties automatiques du jour</h2>
-<p class="note">Consommation par rationnaire :</p>
+<h2>5. Sorties de stock du jour (kg)</h2>
+<p class="note">Saisir les quantités réellement utilisées dans la journée.</p>
 <table>
-<tr><th>Denrée</th><th>Consommation par rationnaire</th><th>Sortie totale (kg)</th></tr>
-<tr><td>Riz</td><td>0,15 kg</td><td id="s_riz">0</td></tr>
-<tr><td>Huile</td><td>0,01 kg</td><td id="s_huile">0</td></tr>
-<tr><td>Poisson</td><td>0,02 kg</td><td id="s_poisson">0</td></tr>
-<tr><td>Haricot</td><td>0,02 kg</td><td id="s_haricot">0</td></tr>
+<tr><th>Denrée</th><th>Quantité sortie</th></tr>
+<tr><td>Riz</td><td><input type="number" min="0" step="0.01" id="s_riz"></td></tr>
+<tr><td>Huile</td><td><input type="number" min="0" step="0.01" id="s_huile"></td></tr>
+<tr><td>Poisson</td><td><input type="number" min="0" step="0.01" id="s_poisson"></td></tr>
+<tr><td>Haricot</td><td><input type="number" min="0" step="0.01" id="s_haricot"></td></tr>
 </table>
 </section>
 
 <section>
-<h2>6. Bilan des stocks (kg)</h2>
+<h2>6. Stocks restants (kg)</h2>
+<p class="note">Stock restant = stock initial - sortie du jour.</p>
 <table>
-<thead><tr><th>Denrée</th><th>Stock initial</th><th>Entrée</th><th>Sortie du jour</th><th>Stock restant</th></tr></thead>
-<tbody id="bilan"></tbody>
+<tr><th>Denrée</th><th>Stock initial</th><th>Sortie</th><th>Stock restant</th></tr>
+<tbody id="stocks"></tbody>
 </table>
-<p><b>Règle : Stock restant = Stock initial + Entrées − Sortie du jour.</b></p>
 </section>
 
 <section>
-<h2>7. Menu et gestion financière</h2>
-<label>Menu du jour</label>
-<textarea id="menu" rows="3" placeholder="Saisir le menu du jour..."></textarea>
-<label>Dépenses du jour (F CFA)</label>
-<input type="number" min="0" id="depenses" value="0">
-<label>Contributions reçues (F CFA)</label>
-<input type="number" min="0" id="contributions" value="0">
-<p>Recette des rations : <strong id="r_fin">0 F CFA</strong></p>
-<p>Total des recettes : <strong id="totalrecettes" class="total">0 F CFA</strong></p>
-<p>Total des dépenses : <strong id="totaldepenses">0 F CFA</strong></p>
-<p>Solde financier : <strong id="solde" class="total">0 F CFA</strong></p>
+<h2>7. Situation financière</h2>
+<p>Nombre de rationnaires : <strong id="r2">0</strong></p>
+<p>Prix unitaire : <strong>25 F CFA</strong></p>
+<p>Recette théorique : <strong id="r3" class="total">0 F CFA</strong></p>
 </section>
 
 <section>
-<h2>Paramètres et sauvegarde</h2>
-<button onclick="sauver()">Enregistrer les données</button>
-<button onclick="window.print()">Imprimer le bilan</button>
-<p id="message" class="note">Les modifications sont sauvegardées automatiquement sur ce téléphone.</p>
+<button onclick="window.print()">Imprimer le rapport</button>
+<button onclick="sauvegarder()">Enregistrer</button>
+<button class="danger" onclick="effacer()">Effacer les données</button>
+<p id="message" class="note"></p>
 </section>
 
 <script>
-const noms=["Riz","Huile","Poisson","Haricot"];
-const ids=["riz","huile","poisson","haricot"];
-const consommation=[0.15,0.01,0.02,0.02];
+const noms=["riz","huile","poisson","haricot"];
 const classes=["CP1","CP2","CE1","CE2","CM1","CM2"];
-
+const prix=25;
 const $=id=>document.getElementById(id);
-const nombre=id=>Math.max(0,Number($(id).value)||0);
-const fmt=n=>Number(n.toFixed(2)).toLocaleString("fr-FR");
+const valeur=id=>Number($(id).value)||0;
 
-function creerClasses(){
+$("date").value=new Date().toISOString().slice(0,10);
+
 $("classes").innerHTML=classes.map((c,i)=>`
-<tr><td>${c}</td>
-<td><input type="number" min="0" id="g${i}" value="0"></td>
-<td><input type="number" min="0" id="f${i}" value="0"></td>
-<td id="t${i}">0</td></tr>`).join("");
-}
+<tr>
+<td>${c}</td>
+<td><input type="number" min="0" step="1" id="g${i}" value="0"></td>
+<td><input type="number" min="0" step="1" id="f${i}" value="0"></td>
+<td id="t${i}">0</td>
+</tr>`).join("");
 
 function calculer(){
-let g=0,f=0;
+let gar=0,fill=0;
 classes.forEach((c,i)=>{
-let a=nombre("g"+i),b=nombre("f"+i);
-g+=a;f+=b;
-$("t"+i).textContent=a+b;
+let g=valeur("g"+i),f=valeur("f"+i);
+gar+=g;fill+=f;
+$("t"+i).textContent=g+f;
 });
-let total=g+f;
-$("tg").textContent=g;
-$("tf").textContent=f;
+let total=gar+fill;
+let recette=total*prix;
+$("tg").textContent=gar;
+$("tf").textContent=fill;
 $("tt").textContent=total;
 $("rationnaires").textContent=total;
-let recette=total*25;
-$("recette").textContent=fmt(recette)+" F CFA";
-$("r_fin").textContent=fmt(recette)+" F CFA";
+$("r2").textContent=total;
+$("recette").textContent=recette.toLocaleString("fr-FR")+" F CFA";
+$("r3").textContent=recette.toLocaleString("fr-FR")+" F CFA";
 
-let lignes="";
-ids.forEach((id,i)=>{
-let sortie=total*consommation[i];
-$("s_"+id).textContent=fmt(sortie);
-let initial=nombre("i_"+id);
-let entree=nombre("e_"+id);
-let restant=initial+entree-sortie;
-lignes+=`<tr><td>${noms[i]}</td><td>${fmt(initial)}</td><td>${fmt(entree)}</td><td>${fmt(sortie)}</td><td>${fmt(restant)}</td></tr>`;
-});
-$("bilan").innerHTML=lignes;
-
-let dep=nombre("depenses");
-let contribution=nombre("contributions");
-let recettes=recette+contribution;
-$("totalrecettes").textContent=fmt(recettes)+" F CFA";
-$("totaldepenses").textContent=fmt(dep)+" F CFA";
-$("solde").textContent=fmt(recettes-dep)+" F CFA";
-sauverSilencieux();
+$("stocks").innerHTML=noms.map(n=>{
+let initial=valeur(n),sortie=valeur("s_"+n);
+let restant=initial-sortie;
+return `<tr><td>${n.charAt(0).toUpperCase()+n.slice(1)}</td>
+<td>${initial.toFixed(2)}</td>
+<td>${sortie.toFixed(2)}</td>
+<td><b>${restant.toFixed(2)}</b></td></tr>`;
+}).join("");
 }
 
-function donnees(){
-let d={};
-document.querySelectorAll("input,textarea").forEach(el=>{
-if(el.id)d[el.id]=el.value;
-});
-return d;
-}
-
-function sauverSilencieux(){
-try{localStorage.setItem("gestionCantine",JSON.stringify(donnees()));}catch(e){}
-}
-
-function sauver(){
-sauverSilencieux();
+function sauvegarder(){
+let data={};
+document.querySelectorAll("input").forEach(el=>data[el.id]=el.value);
+localStorage.setItem("cantineScolaire",JSON.stringify(data));
 $("message").textContent="Données enregistrées avec succès.";
 }
 
 function charger(){
-try{
-let d=JSON.parse(localStorage.getItem("gestionCantine")||"{}");
-Object.keys(d).forEach(id=>{
-if($(id))$(id).value=d[id];
+let data=JSON.parse(localStorage.getItem("cantineScolaire")||"{}");
+Object.keys(data).forEach(id=>{
+if($(id)) $(id).value=data[id];
 });
-}catch(e){}
+calculer();
 }
 
-creerClasses();
-$("date").value=new Date().toISOString().slice(0,10);
-charger();
-document.addEventListener("input",calculer);
-document.addEventListener("change",calculer);
+function effacer(){
+if(confirm("Effacer toutes les données enregistrées ?")){
+localStorage.removeItem("cantineScolaire");
+document.querySelectorAll("input[type=number]").forEach(el=>el.value=0);
+$("etablissement").value="EPP FENI";
 calculer();
+$("message").textContent="Données effacées.";
+}
+}
+
+document.addEventListener("input",e=>{
+if(e.target.tagName==="INPUT"){
+calculer();
+sauvegarder();
+}
+});
+charger();
 </script>
 </body>
 </html>
