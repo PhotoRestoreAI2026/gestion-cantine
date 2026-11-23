@@ -1,11 +1,12 @@
-
 {
   "name": "GESTION DE CANTINE SCOLAIRE",
   "short_name": "CANTINE",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#f0f5ef",
+  "background_color": "#ffffff",
   "theme_color": "#087b45",
-  "orientation": "portrait"
+  "orientation": "portrait",
+  "id": "gestion-cantine-scolaire",
+  "description": "Application de gestion des stocks, des entrées et sorties de denrées et des rations de la cantine scolaire"
 }
