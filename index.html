@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#087b45">
+<title>Gestion de Cantine Scolaire</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;
+ font-family:Arial,sans-serif;
+ background:#f0f5f1;
+ color:#222;
+}
+header{
+ background:#087b45;
+ color:white;
+ text-align:center;
+ padding:22px 10px;
+}
+.logo{font-size:55px}
+header h1{font-size:23px;margin:8px}
+header p{margin:5px}
+main{padding:12px;max-width:700px;margin:auto}
+.card{
+ background:white;
+ padding:15px;
+ margin:12px 0;
+ border-radius:12px;
+ box-shadow:0 2px 7px #0002;
+}
+h2{color:#087b45;font-size:19px}
+input,select{
+ width:100%;
+ padding:12px;
+ margin:6px 0 12px;
+ border:1px solid #ccc;
+ border-radius:7px;
+ font-size:16px;
+ background:white;
+}
+button{
+ border:0;
+ border-radius:7px;
+ padding:12px;
+ background:#087b45;
+ color:white;
+ font-size:15px;
+ font-weight:bold;
+ margin:4px 0;
+}
+button.danger{background:#c62828}
+button.blue{background:#1769aa}
+.stat{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:10px;
+}
+.stat div{
+ background:#e2f3e8;
+ padding:15px;
+ text-align:center;
+ border-radius:9px;
+}
+.stat strong{display:block;font-size:23px;color:#087b45}
+table{width:100%;border-collapse:collapse;font-size:13px}
+td,th{border:1px solid #ddd;padding:8px;text-align:left}
+th{background:#e2f3e8}
+.tablewrap{overflow-x:auto}
+footer{text-align:center;padding:20px;color:#666}
+</style>
+</head>
+
+<body>
+
+<header>
+<div class="logo">🍽️ 👧🏾👦🏾</div>
+<h1>GESTION DE CANTINE SCOLAIRE</h1>
+<p>Bien manger pour mieux apprendre</p>
+<p>Prix d'une ration : <b>25 F CFA</b></p>
+</header>
+
+<main>
+
+<div class="card">
+<h2>🏫 Informations de l'école</h2>
+<input id="ecole" placeholder="Nom de l'établissement">
+<button onclick="sauverEcole()">Enregistrer le nom</button>
+</div>
+
+<div class="card">
+<h2>📊 Tableau de bord</h2>
+<div class="stat">
+<div>Élèves inscrits<strong id="total">0</strong></div>
+<div>Repas servis<strong id="repas">0</strong></div>
+<div>Recettes<strong id="recettes">0 F</strong></div>
+<div>Dépenses<strong id="depenses">0 F</strong></div>
+</div>
+</div>
+
+<div class="card">
+<h2>👨‍🎓 Inscription des élèves</h2>
+<input id="nom" placeholder="Nom et prénom de l'élève">
+<select id="classe">
+<option value="">Choisir la classe</option>
+<option>CP1</option><option>CP2</option>
+<option>CE1</option><option>CE2</option>
+<option>CM1</option><option>CM2</option>
+</select>
+<button onclick="ajouterEleve()">Ajouter l'élève</button>
+</div>
+
+<div class="card">
+<h2>🍛 Enregistrement des repas</h2>
+<select id="eleveRepas">
+<option value="">Choisir un élève</option>
+</select>
+<input type="date" id="dateRepas">
+<button onclick="servirRepas()">Enregistrer le repas (25 F)</button>
+</div>
+
+<div class="card">
+<h2>💰 Enregistrement des dépenses</h2>
+<input id="motif" placeholder="Motif de la dépense">
+<input id="montant" type="number" min="1" placeholder="Montant en F CFA">
+<button onclick="ajouterDepense()">Enregistrer la dépense</button>
+</div>
+
+<div class="card">
+<h2>📋 Liste des élèves</h2>
+<div class="tablewrap">
+<table>
+<thead><tr><th>Nom</th><th>Classe</th><th>Action</th></tr></thead>
+<tbody id="listeEleves"></tbody>
+</table>
+</div>
+</div>
+
+<div class="card">
+<h2>📖 Historique des repas</h2>
+<div class="tablewrap">
+<table>
+<thead><tr><th>Date</th><th>Élève</th><th>Montant</th></tr></thead>
+<tbody id="historique"></tbody>
+</table>
+</div>
+</div>
+
+<div class="card">
+<h2>🧾 Bilan financier</h2>
+<p>Recettes : <b id="bRecettes">0 F CFA</b></p>
+<p>Dépenses : <b id="bDepenses">0 F CFA</b></p>
+<p>Solde : <b id="solde">0 F CFA</b></p>
+<button class="blue" onclick="window.print()">Imprimer le bilan</button>
+<button class="blue" onclick="exporter()">Sauvegarder les données</button>
+</div>
+
+</main>
+
+<footer>
+GESTION DE CANTINE SCOLAIRE<br>
+Application de gestion - 2026
+</footer>
+
+<script>
+const PRIX=25;
+
+let eleves=JSON.parse(localStorage.getItem("cantine_eleves")||"[]");
+let repas=JSON.parse(localStorage.getItem("cantine_repas")||"[]");
+let depenses=JSON.parse(localStorage.getItem("cantine_depenses")||"[]");
+
+function sauvegarder(){
+ localStorage.setItem("cantine_eleves",JSON.stringify(eleves));
+ localStorage.setItem("cantine_repas",JSON.stringify(repas));
+ localStorage.setItem("cantine_depenses",JSON.stringify(depenses));
+ afficher();
+}
+
+function sauverEcole(){
+ localStorage.setItem("cantine_ecole",document.getElementById("ecole").value);
+ alert("Nom de l'école enregistré !");
+}
+
+function ajouterEleve(){
+ let nom=document.getElementById("nom").value.trim();
+ let classe=document.getElementById("classe").value;
+ if(!nom||!classe){alert("Remplissez le nom et la classe.");return;}
+ eleves.push({id:Date.now(),nom,classe});
+ document.getElementById("nom").value="";
+ document.getElementById("classe").value="";
+ sauvegarder();
+}
+
+function servirRepas(){
+ let id=Number(document.getElementById("eleveRepas").value);
+ let date=document.getElementById("dateRepas").value;
+ let e=eleves.find(x=>x.id===id);
+ if(!e||!date){alert("Choisissez un élève et une date.");return;}
+ if(repas.some(r=>r.id===id&&r.date===date)){
+ alert("Cet élève a déjà un repas enregistré à cette date.");
+ return;
+ }
+ repas.push({id,date,nom:e.nom,montant:PRIX});
+ sauvegarder();
+ alert("Repas enregistré : 25 F CFA");
+}
+
+function ajouterDepense(){
+ let motif=document.getElementById("motif").value.trim();
+ let montant=Number(document.getElementById("montant").value);
+ if(!motif||!Number.isFinite(montant)||montant<=0){
+ alert("Remplissez correctement les informations.");
+ return;
+ }
+ depenses.push({motif,montant,date:new Date().toLocaleDateString("fr-FR")});
+ document.getElementById("motif").value="";
+ document.getElementById("montant").value="";
+ sauvegarder();
+}
+
+function supprimerEleve(id){
+ if(!confirm("Supprimer cet élève et ses repas ?"))return;
+ eleves=eleves.filter(e=>e.id!==id);
+ repas=repas.filter(r=>r.id!==id);
+ sauvegarder();
+}
+
+function afficher(){
+ document.getElementById("total").textContent=eleves.length;
+ document.getElementById("repas").textContent=repas.length;
+ let rec=repas.reduce((s,r)=>s+r.montant,0);
+ let dep=depenses.reduce((s,d)=>s+d.montant,0);
+
+ document.getElementById("recettes").textContent=rec+" F";
+ document.getElementById("depenses").textContent=dep+" F";
+ document.getElementById("bRecettes").textContent=rec+" F CFA";
+ document.getElementById("bDepenses").textContent=dep+" F CFA";
+ document.getElementById("solde").textContent=(rec-dep)+" F CFA";
+
+ document.getElementById("listeEleves").innerHTML=eleves.map(e=>
+ `<tr><td>${echapper(e.nom)}</td><td>${echapper(e.classe)}</td>
+ <td><button class="danger" onclick="supprimerEleve(${e.id})">Supprimer</button></td></tr>`
+ ).join("");
+
+ document.getElementById("eleveRepas").innerHTML=
+ '<option value="">Choisir un élève</option>'+
+ eleves.map(e=>`<option value="${e.id}">${echapper(e.nom)} - ${echapper(e.classe)}</option>`).join("");
+
+ document.getElementById("historique").innerHTML=repas.map(r=>
+ `<tr><td>${r.date}</td><td>${echapper(r.nom)}</td><td>${r.montant} F</td></tr>`
+ ).join("");
+}
+
+function echapper(s){
+ return String(s).replace(/[&<>"']/g,c=>({
+ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+ })[c]);
+}
+
+function exporter(){
+ let contenu=JSON.stringify({eleves,repas,depenses},null,2);
+ let fichier=new Blob([contenu],{type:"application/json"});
+ let url=URL.createObjectURL(fichier);
+ let a=document.createElement("a");
+ a.href=url;
+ a.download="sauvegarde-cantine.json";
+ a.click();
+ URL.revokeObjectURL(url);
+}
+
+document.getElementById("ecole").value=localStorage.getItem("cantine_ecole")||"";
+document.getElementById("dateRepas").value=new Date().toISOString().slice(0,10);
+afficher();
+</script>
+
+</body>
+</html>
