@@ -1,0 +1,11 @@
+
+{
+  "name": "GESTION DE CANTINE SCOLAIRE",
+  "short_name": "CANTINE",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f0f5ef",
+  "theme_color": "#087b45",
+  "orientation": "portrait"
+}
